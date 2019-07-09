@@ -4,18 +4,23 @@
             [clojure.string :as cs]))
 
 (defn do-merge
-  "Takes a left and right sequence, destructured to e.g.
+  "Merges two sorted sequences - `left` and `right`. The sequences are
+  destructured as e.g.
     x - the first element
     xs - the rest of the elements
-    left - the whole sequence
-   If the first element in either sequence is nil, i.e. it's an empty sequence,
-   then we know we can simply combine the two. Otherwise, we put the smaller of
-   the first elements onto the front of the result of do-merge of the others."
-  [[x & xs :as left] [y & ys :as right]]
-  (cond
-    (or (nil? x) (nil? y)) (concat left right)
-    (< x y)                (cons x (do-merge xs right))
-    :else                  (cons y (do-merge left ys))))
+    lt - the whole left sequence
+   If either first element is `nil` then we can safely append them to the result.
+   Otherwise, we still have elements, and so we append the smaller of the two onto
+   the result of a recursive call with the rest of the elements from that sequence
+   and the other sequence."
+  [left right]
+  (loop [[x & xs :as lt] left
+         [y & ys :as rt] right
+         result []]
+    (cond
+      (or (nil? x) (nil? y)) (concat result lt rt)
+      (< x y)                (recur xs rt (conj result x))
+      :else                  (recur lt ys (conj result y)))))
 
 (defn merge-sort [arg]
   (let [cnt (count arg)
@@ -35,4 +40,8 @@
   (merge-sort data1)
   (merge-sort data2)
   (do-merge [1 4 4 5] [2 3 7 9])
-  (do-merge [1] [2 5]))
+  (do-merge [1] [2 5])
+  ;; Make sure there's no StackOverflow
+  (do-merge (range 1000000) (range 1000000 2000000))
+  ;; StackOverflow
+  (merge-sort (take 1000000 (map rand-int (repeat 1000000)))))
