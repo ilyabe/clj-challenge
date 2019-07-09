@@ -43,5 +43,4 @@
   (do-merge [1] [2 5])
   ;; Make sure there's no StackOverflow
   (do-merge (range 1000000) (range 1000000 2000000))
-  ;; StackOverflow
   (merge-sort (take 1000000 (map rand-int (repeat 1000000)))))
