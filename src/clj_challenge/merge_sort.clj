@@ -1,7 +1,5 @@
 (ns clj-challenge.merge-sort
-  "Sorts numbers using the Merge Sort algorithm"
-  (:require [clojure.set :as clj-set]
-            [clojure.string :as cs]))
+  "Sorts numbers using the Merge Sort algorithm")
 
 (defn do-merge
   "Merges two sorted sequences - `left` and `right`. The sequences are
